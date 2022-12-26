@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     "user.apps.UserConfig",
 ]
 
-AUTH_USER_MODEL = "user.CustomUserModel"
+AUTH_USER_MODEL = "user.User"
 
 # Django All Auth Configurations
 AUTHENTICATION_BACKENDS = [
