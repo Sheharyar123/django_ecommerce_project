@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "ckeditor",
     # Local
     "user.apps.UserConfig",
     "core.apps.CoreConfig",
