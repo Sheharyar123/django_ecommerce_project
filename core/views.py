@@ -1,16 +1,35 @@
-from django.shortcuts import render
-from django.views.generic import View, DetailView
+from django.shortcuts import render, get_object_or_404
+from django.views.generic import View, ListView, DetailView
 
-from .models import Product
+from .models import Category, Product
 
 # Create your views here.
 
 
 class HomePageView(View):
     def get(self, request, *args, **kwargs):
-        products = Product.objects.all().filter(is_available=True)[:4]
+        products = Product.objects.filter(is_available=True)[:4]
         context = {"products": products}
         return render(request, "core/index.html", context)
+
+
+class ProductListView(ListView):
+    model = Product
+    template_name = "core/product_list.html"
+    context_object_name = "product_list"
+
+    def get_queryset(self):
+        category_slug = self.kwargs.get("category_slug")
+        if category_slug is not None:
+            category = get_object_or_404(Category, slug=category_slug)
+            return Product.objects.filter(is_available=True, category=category)
+
+        return Product.objects.filter(is_available=True)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["category_slug"] = self.kwargs.get("category_slug")
+        return context
 
 
 class ProductDetailView(DetailView):
