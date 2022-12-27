@@ -36,3 +36,10 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = "core/product_detail.html"
     context_object_name = "product"
+
+    def get_object(self):
+        category_slug = self.kwargs.get("category_slug")
+        product_slug = self.kwargs.get("product_slug")
+        return get_object_or_404(
+            Product, is_available=True, category__slug=category_slug, slug=product_slug
+        )
