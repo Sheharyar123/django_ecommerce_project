@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # Local
     "user.apps.UserConfig",
     "core.apps.CoreConfig",
+    "cart.apps.CartConfig",
 ]
 
 AUTH_USER_MODEL = "user.User"
