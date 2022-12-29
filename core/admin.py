@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product
+from .models import Category, Product, Variation
 
 # Register your models here.
 class CategoryAdmin(admin.ModelAdmin):
@@ -20,7 +20,7 @@ class ProductAdmin(admin.ModelAdmin):
         "is_available",
     )
     prepopulated_fields = {"slug": ("name",)}
-    ordering = ("-updated_on", "-added_on")
+    ordering = ("-modified_on", "-added_on")
     search_fields = (
         "name",
         "original_price",
@@ -28,5 +28,15 @@ class ProductAdmin(admin.ModelAdmin):
     list_editable = ["discount_price", "is_available"]
 
 
+class VariationAdmin(admin.ModelAdmin):
+    list_display = ["value", "category", "is_active"]
+    list_editable = [
+        "is_active",
+    ]
+    ordering = ("-modified_on", "-added_on")
+    search_fields = ("name",)
+
+
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
+admin.site.register(Variation, VariationAdmin)

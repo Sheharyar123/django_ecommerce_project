@@ -33,8 +33,11 @@
                             >{{ cart_item.product.name }}</a
                           >
                           <p class="text-muted small">
-                            Color: 25 Mpx <br />
-                            Size: Canon
+                            {% if cart_item.variations.all %}
+                              {% for item in cart_item.variations.all %}
+                                {{ item.category|title }}: {{ item.value }} <br />
+                              {% endfor %}
+                            {% endif %}
                           </p>
                         </figcaption>
                       </figure>
@@ -81,7 +84,7 @@
               </table>
             </div>
           </aside>
-          
+
           <aside class="col-lg-3">
             <div class="card">
               <div class="card-body">

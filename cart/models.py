@@ -1,6 +1,5 @@
 from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
-from core.models import Product
+from core.models import Product, Variation
 
 # Create your models here.
 class Cart(models.Model):
@@ -24,7 +23,7 @@ class Cart(models.Model):
 
     @property
     def get_total_with_tax(self):
-        return round(self.get_total + self.get_tax, 2) 
+        return round(self.get_total + self.get_tax, 2)
 
 
 class CartItem(models.Model):
@@ -32,10 +31,11 @@ class CartItem(models.Model):
         Product, on_delete=models.CASCADE, related_name="cart_items"
     )
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="cart_items")
+    variations = models.ManyToManyField(Variation, blank=True)
     quantity = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
     added_on = models.DateTimeField(auto_now_add=True)
-    updated_on = models.DateTimeField(auto_now=True)
+    modified_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.product.name
@@ -53,4 +53,3 @@ class CartItem(models.Model):
             return self.product.discount_price * self.quantity
 
         return self.product.original_price * self.quantity
-
