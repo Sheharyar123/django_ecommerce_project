@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 from core.models import Product
 
 # Create your models here.
@@ -8,6 +9,22 @@ class Cart(models.Model):
 
     def __str__(self):
         return self.cart_id
+
+    @property
+    def get_total(self):
+        cart_items = self.cart_items.all()
+        total = 0
+        for cart_item in cart_items:
+            total += cart_item.get_subtotal
+        return total
+
+    @property
+    def get_tax(self):
+        return round((5 * self.get_total) / 100, 2)
+
+    @property
+    def get_total_with_tax(self):
+        return round(self.get_total + self.get_tax, 2) 
 
 
 class CartItem(models.Model):
@@ -37,7 +54,3 @@ class CartItem(models.Model):
 
         return self.product.original_price * self.quantity
 
-    @property
-    def get_tax(self):
-        total = sum(self.cart.cart_items.all().get_subtotal())
-        return total

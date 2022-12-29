@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, ListView, DetailView
 
+from cart.views import _cart_id
+from cart.models import CartItem
 from .models import Category, Product
 
 # Create your views here.
@@ -43,3 +45,10 @@ class ProductDetailView(DetailView):
         return get_object_or_404(
             Product, is_available=True, category__slug=category_slug, slug=product_slug
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["in_cart"] = CartItem.objects.filter(
+            cart__cart_id=_cart_id(self.request), product=self.get_object()
+        )
+        return context
