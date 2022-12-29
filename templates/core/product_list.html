@@ -1,12 +1,16 @@
-{% extends "_base.html" %} 
+{% extends "_base.html" %}
 
-{% block title %}Store{% endblock title %} 
+{% block title %}Store{% endblock title %}
 
-{% block content %} 
+{% block content %}
 
   <section class="section-pagetop bg">
     <div class="container">
-      <h2 class="title-page">Our Store</h2>
+      {% if 'search' in request.path %}
+        <h2 class="title-page">Search Results</h2>
+      {% else %}
+        <h2 class="title-page">Our Store</h2>
+      {% endif %}
     </div>
   </section>
   <section class="section-content padding-y">
@@ -38,7 +42,7 @@
                 </div>
               </div>
             </article>
-            
+
             <article class="filter-group">
               <header class="card-header">
                 <a
@@ -127,7 +131,7 @@
             </article>
           </div>
         </aside>
-    
+
         <main class="col-md-9">
           <header class="border-bottom mb-4 pb-3">
             <div class="form-inline">
@@ -137,74 +141,78 @@
             </div>
           </header>
 
-          <div class="row">
-            {% for product in product_list %}
-              <div class="col-md-4">
-                <figure class="card card-product-grid">
-                  <div class="img-wrap">
-                    <a href="{{ product.get_absolute_url }}"><img src="{{ product.image.url }}" /></a>
-                  </div>
-                  <!-- img-wrap.// -->
-                  <figcaption class="info-wrap">
-                    <div class="fix-height">
-                      <a href="{{ product.get_absolute_url }}" class="title"
-                        >{{ product.name }}</a
-                      >
-                      <div class="price-wrap mt-2">
-                        {% if product.discount_price %}
-                          <span class="price">${{ product.discount_price }}</span>
-                          <del class="price-old">${{ product.original_price }}</del>
-                        {% else %}
-                          <span class="price">${{ product.original_price }}</span>
-                        {% endif %}
+          {% if product_list %}
+            <div class="row">
+                {% for product in product_list %}
+                  <div class="col-md-4">
+                    <figure class="card card-product-grid">
+                      <div class="img-wrap">
+                        <a href="{{ product.get_absolute_url }}"><img src="{{ product.image.url }}" /></a>
                       </div>
-                    </div>
-                    {% if product.stock < 1 %}
-                      <h5 class="text-danger">Out of Stock</h5>
-                    {% else %}
-                      <a href="{% url 'cart:add_to_cart' product.slug %}" class="btn btn-block btn-primary">Add to cart </a>
-                    {% endif %}
-                  </figcaption>
-                </figure>
-              </div>
-            {% endfor %}
-          </div>
-          <!-- row end.// -->
+                      <!-- img-wrap.// -->
+                      <figcaption class="info-wrap">
+                        <div class="fix-height">
+                          <a href="{{ product.get_absolute_url }}" class="title"
+                            >{{ product.name }}</a
+                          >
+                          <div class="price-wrap mt-2">
+                            {% if product.discount_price %}
+                              <span class="price">${{ product.discount_price }}</span>
+                              <del class="price-old">${{ product.original_price }}</del>
+                            {% else %}
+                              <span class="price">${{ product.original_price }}</span>
+                            {% endif %}
+                          </div>
+                        </div>
+                        {% if product.stock < 1 %}
+                          <h5 class="text-danger">Out of Stock</h5>
+                        {% else %}
+                          <a href="{% url 'cart:add_to_cart' product.slug %}" class="btn btn-block btn-primary">Add to cart </a>
+                        {% endif %}
+                      </figcaption>
+                    </figure>
+                  </div>
+                {% endfor %}
+            </div>
+            <!-- row end.// -->
 
-          <nav class="mt-4" aria-label="Page navigation sample">
-            <ul class="pagination justify-content-center">
-              {% if page_obj.has_previous %}
-                <li class="page-item">
-                  <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
-                </li>
-              {% else %}
-                <li class="page-item disabled">
-                  <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Previous</a>
-                </li>
-              {% endif %}
-
-              {% for i in page_obj.paginator.page_range %}
-                {% if i == page_obj.number %}
-                  <li class="page-item active">
-                    <span class="page-link">{{ i }}</span>
+            <nav class="mt-4" aria-label="Page navigation sample">
+              <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
                   </li>
                 {% else %}
-                  <li class="page-item">
-                    <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Previous</a>
                   </li>
                 {% endif %}
-              {% endfor %}
-              {% if page_obj.has_next %}
-                <li class="page-item">
-                  <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
-                </li>
-              {% else %}
-                <li class="page-item disabled">
-                  <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Next</a>
-                </li>
-              {% endif %}
-            </ul>
-          </nav>
+
+                {% for i in page_obj.paginator.page_range %}
+                  {% if i == page_obj.number %}
+                    <li class="page-item active">
+                      <span class="page-link">{{ i }}</span>
+                    </li>
+                  {% else %}
+                    <li class="page-item">
+                      <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                    </li>
+                  {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                  <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                  </li>
+                {% else %}
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="True">Next</a>
+                  </li>
+                {% endif %}
+              </ul>
+            </nav>
+          {% else %}
+            <h2>We could not find anything for "{{ query }}".</h2>
+          {% endif %}
         </main>
         <!-- col.// -->
       </div>

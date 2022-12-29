@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, ListView, DetailView
 
@@ -23,7 +24,12 @@ class ProductListView(ListView):
 
     def get_queryset(self):
         category_slug = self.kwargs.get("category_slug")
-        if category_slug is not None:
+        query = self.request.GET.get("keyword")
+        if query is not None:
+            return Product.objects.filter(
+                Q(name__icontains=query) | Q(category__name__icontains=query)
+            )
+        elif category_slug is not None:
             category = get_object_or_404(Category, slug=category_slug)
             return Product.objects.filter(is_available=True, category=category)
 
@@ -32,6 +38,7 @@ class ProductListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["category_slug"] = self.kwargs.get("category_slug")
+        context["query"] = self.request.GET.get("keyword")
         return context
 
 
