@@ -1,3 +1,4 @@
+from allauth.account.forms import SignupForm
 from django import forms
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
@@ -48,3 +49,9 @@ class UserChangeForm(forms.ModelForm):
 
     def clean_password(self):
         return self.initial["password"]
+
+
+# Custom Sign Up Form
+class CustomSignupForm(SignupForm):
+    first_name = forms.CharField(required=True)
+    last_name = forms.CharField(required=True)

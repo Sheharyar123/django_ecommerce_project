@@ -11,6 +11,12 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import environ
+
+# Enviornment Variables
+env = environ.Env()
+# reading .env file
+environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,6 +49,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     "ckeditor",
+    "crispy_forms",
     # Local
     "user.apps.UserConfig",
     "core.apps.CoreConfig",
@@ -60,7 +67,8 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 SITE_ID = 1
-
+LOGIN_REDIRECT_URL = "core:index"
+ACCOUNT_LOGOUT_REDIRECT = "core:index"
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
@@ -158,3 +166,20 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Crispy Forms
+CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+# Setting connection with gmail smtp
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = True  # new
+
+# Django Sign Up Form Settings
+ACCOUNT_FORMS = {
+    "signup": "user.forms.CustomSignupForm",
+}
