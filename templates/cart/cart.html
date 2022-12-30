@@ -47,7 +47,7 @@
                         <div class="input-group input-spinner">
                           <div class="input-group-prepend">
                             <a
-                              href="{% url 'cart:remove_single_from_cart' cart_item.product.slug %}"
+                              href="{% url 'cart:remove_single_from_cart' cart_item.product.slug cart_item.id %}"
                               class="btn btn-light"
                               type="button"
                               id="button-plus"
@@ -57,14 +57,20 @@
                           </div>
                           <input type="text" class="form-control" value="{{ cart_item.quantity }}" />
                           <div class="input-group-append">
-                            <a
-                              href="{% url 'cart:add_to_cart' cart_item.product.slug %}"
-                              class="btn btn-light"
-                              type="button"
-                              id="button-minus"
-                            >
-                              <i class="fa fa-plus"></i>
-                            </a>
+                            <form method="POST" action="{% url 'cart:add_to_cart' cart_item.product.slug %}">
+                              {% csrf_token %}
+                              {% for variation in cart_item.variations.all %}
+                                <input type="hidden" name="{{ variation.category|lower }}" value={{ variation.value|title }} />
+                              {% endfor %}
+                              <button
+                                type="submit"
+                                class="btn btn-light"
+                                type="button"
+                                id="button-minus"
+                              >
+                                <i class="fa fa-plus"></i>
+                              </button>
+                            </form>
                           </div>
                         </div>
                       </div>
@@ -76,7 +82,7 @@
                       </div>
                     </td>
                     <td class="text-right">
-                      <a href="{% url 'cart:remove_from_cart' cart_item.product.slug %}" class="btn btn-danger"> Remove</a>
+                      <a href="{% url 'cart:remove_from_cart' cart_item.product.slug cart_item.id %}" class="btn btn-danger"> Remove</a>
                     </td>
                   </tr>
                   {% endfor %}
